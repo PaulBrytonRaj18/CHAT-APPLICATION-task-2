@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}{{ room_name }} - ChatApp{% endblock %}
+
+{% block content %}
+<div class="room-container">
+    <div class="room-header">
+        <div class="room-info">
+            <h1>{{ room_name }}</h1>
+            <p>Room Code: <span class="room-code">{{ room_code }}</span></p>
+            <p class="online-status">● Online</p>
+        </div>
+        <div class="room-actions">
+            <button class="btn btn-secondary" onclick="copyRoomCode()">
+                <i class="fas fa-copy"></i>
+                Copy Code
+            </button>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <div class="chat-container">
+        <div class="messages-container" id="messages-container">
+            {% for message in messages %}
+            <div class="message {% if message.user_id == user_id %}message-sent{% else %}message-received{% endif %}">
+                <div class="message-header">
+                    <span class="message-user">{{ message.user_id }}</span>
+                    <span class="message-time">{{ message.timestamp }}</span>
+                </div>
+                <div class="message-content">{{ message.message }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="message-input-container">
+            <form id="message-form" class="message-form">
+                <div class="input-group">
+                    <input type="text" id="message-input" placeholder="Type your message..." required>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const socket = io();
+    const roomCode = '{{ room_code }}';
+    const userId = '{{ user_id }}';
+    
+    // Join room
+    socket.emit('join_room', { room_code: roomCode });
+    
+    // Message form
+    document.getElementById('message-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const messageInput = document.getElementById('message-input');
+        const message = messageInput.value.trim();
+        
+        if (message) {
+            socket.emit('send_message', {
+                room_code: roomCode,
+                message: message
+            });
+            messageInput.value = '';
+        }
+    });
+    
+    // Socket events
+    socket.on('new_message', function(data) {
+        addMessage(data);
+    });
+    
+    socket.on('user_joined', function(data) {
+        addSystemMessage(data.message, data.timestamp);
+    });
+    
+    socket.on('user_left', function(data) {
+        addSystemMessage(data.message, data.timestamp);
+    });
+    
+    function addMessage(data) {
+        const messagesContainer = document.getElementById('messages-container');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${data.user_id === userId ? 'message-sent' : 'message-received'}`;
+        
+        messageDiv.innerHTML = `
+            <div class="message-header">
+                <span class="message-user">${data.user_id}</span>
+                <span class="message-time">${data.timestamp}</span>
+            </div>
+            <div class="message-content">${data.message}</div>
+        `;
+        
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    function addSystemMessage(message, timestamp) {
+        const messagesContainer = document.getElementById('messages-container');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message message-system';
+        
+        messageDiv.innerHTML = `
+            <div class="message-content">${message}</div>
+            <div class="message-time">${timestamp}</div>
+        `;
+        
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Auto-scroll to bottom
+    const messagesContainer = document.getElementById('messages-container');
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Handle page unload
+    window.addEventListener('beforeunload', function() {
+        socket.emit('leave_room', { room_code: roomCode });
+    });
+});
+
+function copyRoomCode() {
+    const roomCode = '{{ room_code }}';
+    navigator.clipboard.writeText(roomCode).then(function() {
+        // Show feedback
+        const button = event.target.closest('button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => {
+            button.innerHTML = originalText;
+        }, 2000);
+    });
+}
+</script>
+{% endblock %}
