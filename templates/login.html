@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Login - ChatApp{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <i class="fas fa-sign-in-alt"></i>
+            <h2>Login to ChatApp</h2>
+            <p>Enter your credentials to access your account</p>
+        </div>
+        
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="user_id">
+                    <i class="fas fa-user"></i>
+                    User ID
+                </label>
+                <input type="text" id="user_id" name="user_id" required 
+                       placeholder="Enter your unique User ID">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">
+                    <i class="fas fa-lock"></i>
+                    Password
+                </label>
+                <input type="password" id="password" name="password" required 
+                       placeholder="Enter your password">
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-full">
+                <i class="fas fa-sign-in-alt"></i>
+                Login
+            </button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>Don't have an account? 
+                <a href="{{ url_for('register') }}" class="auth-link">Create one here</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

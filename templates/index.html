@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - ChatApp{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <div class="hero-icon">
+            <i class="fas fa-comments"></i>
+        </div>
+        <h1 class="hero-title">Welcome to ChatApp</h1>
+        <p class="hero-subtitle">Connect with friends and family in real-time</p>
+        
+        <div class="hero-actions">
+            <a href="{{ url_for('login') }}" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt"></i>
+                Login
+            </a>
+            <a href="{{ url_for('register') }}" class="btn btn-secondary">
+                <i class="fas fa-user-plus"></i>
+                Create Account
+            </a>
+        </div>
+    </div>
+    
+    <div class="features">
+        <div class="feature">
+            <i class="fas fa-users"></i>
+            <h3>Create Rooms</h3>
+            <p>Create private chat rooms and share the code with friends</p>
+        </div>
+        <div class="feature">
+            <i class="fas fa-key"></i>
+            <h3>Join Rooms</h3>
+            <p>Join existing rooms using unique room codes</p>
+        </div>
+        <div class="feature">
+            <i class="fas fa-bolt"></i>
+            <h3>Real-time Chat</h3>
+            <p>Instant messaging with WebSocket technology</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - ChatApp{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Welcome back, {{ user_id }}!</h1>
+        <p>Manage your rooms and start new conversations</p>
+    </div>
+    
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <div class="card-header">
+                <i class="fas fa-plus-circle"></i>
+                <h3>Create New Room</h3>
+            </div>
+            <form id="create-room-form" class="card-form">
+                <div class="form-group">
+                    <label for="room_name">Room Name</label>
+                    <input type="text" id="room_name" name="room_name" required 
+                           placeholder="Enter room name">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-plus"></i>
+                    Create Room
+                </button>
+            </form>
+        </div>
+        
+        <div class="dashboard-card">
+            <div class="card-header">
+                <i class="fas fa-door-open"></i>
+                <h3>Join Existing Room</h3>
+            </div>
+            <form id="join-room-form" class="card-form">
+                <div class="form-group">
+                    <label for="room_code">Room Code</label>
+                    <input type="text" id="room_code" name="room_code" required 
+                           placeholder="Enter room code">
+                </div>
+                <button type="submit" class="btn btn-secondary btn-full">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Join Room
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    {% if user_rooms %}
+    <div class="my-rooms">
+        <h2>My Rooms</h2>
+        <div class="rooms-grid">
+            {% for room_code in user_rooms %}
+            <div class="room-card">
+                <div class="room-info">
+                    <h4>{{ rooms.get(room_code, {}).get('name', 'Unknown Room') }}</h4>
+                    <p>Code: {{ room_code }}</p>
+                </div>
+                <a href="{{ url_for('room', room_code=room_code) }}" class="btn btn-primary btn-small">
+                    <i class="fas fa-comments"></i>
+                    Enter Room
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="actions-grid">
+            <button class="action-btn" onclick="refreshRooms()">
+                <i class="fas fa-sync-alt"></i>
+                <span>Refresh</span>
+            </button>
+            <button class="action-btn" onclick="showHelp()">
+                <i class="fas fa-question-circle"></i>
+                <span>Help</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="help-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>How to Use ChatApp</h2>
+        <div class="help-content">
+            <h3>Creating a Room:</h3>
+            <p>Enter a room name and click "Create Room". You'll get a unique room code to share with friends.</p>
+            
+            <h3>Joining a Room:</h3>
+            <p>Enter the room code provided by someone else and click "Join Room".</p>
+            
+            <h3>Chatting:</h3>
+            <p>Once in a room, you can send messages in real-time. All messages are stored in the room's history.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const socket = io();
+    
+    // Create room form
+    document.getElementById('create-room-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const roomName = document.getElementById('room_name').value;
+        
+        socket.emit('create_room', { room_name: roomName });
+        
+        document.getElementById('room_name').value = '';
+    });
+    
+    // Join room form
+    document.getElementById('join-room-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const roomCode = document.getElementById('room_code').value.toUpperCase();
+        
+        socket.emit('join_existing_room', { room_code: roomCode });
+        
+        document.getElementById('room_code').value = '';
+    });
+    
+    // Socket events
+    socket.on('room_created', function(data) {
+        window.location.href = `/room/${data.room_code}`;
+    });
+    
+    socket.on('room_joined', function(data) {
+        window.location.href = `/room/${data.room_code}`;
+    });
+    
+    socket.on('join_error', function(data) {
+        alert(data.message);
+    });
+});
+
+function refreshRooms() {
+    location.reload();
+}
+
+function showHelp() {
+    document.getElementById('help-modal').style.display = 'block';
+}
+
+// Close modal
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('close') || e.target.classList.contains('modal')) {
+        document.getElementById('help-modal').style.display = 'none';
+    }
+});
+</script>
+{% endblock %}
