@@ -1,5 +1,31 @@
 # CHAT-APPLICATION-task-2
 
+*Company*: CODTECH IT SOLUTIONS
+
+*Name*: Paul Bryton Raj
+
+*INTERN ID*: CY06DY2622
+
+*DOMAIN*: Full Stack Developement
+
+*DURATION*: 6 weeks
+
+*MENTOR*: **NEELA SANTHOSH**
+
+**Output**
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/93403306-64b6-4dd9-a8d5-1ebb63c0905c" />
+
+
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/0913bd80-a474-4531-8b2c-5c1efcaa0a2a" />
+
+
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/b6caf078-5689-4e21-adfb-896794444fdc" />
+
+
+<img width="1896" height="905" alt="image" src="https://github.com/user-attachments/assets/22de11dc-0138-4d8a-aa98-62254d0ba7e1" />
+
+
+
 # ChatApp - Real-time Chat Application
 
 A modern, real-time chat application built with Flask and WebSocket technology. Features include user authentication, room creation, and instant messaging.
