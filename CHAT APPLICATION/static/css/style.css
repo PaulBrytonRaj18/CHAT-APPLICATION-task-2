@@ -38,7 +38,9 @@ body {
     align-items: center;
     font-size: 1.5rem;
     font-weight: bold;
+    justify-content: space-between;
     color: #667eea;
+    
 }
 
 .nav-brand i {
@@ -50,6 +52,23 @@ body {
     display: flex;
     align-items: center;
     gap: 1rem;
+}
+
+
+.toggle-button {
+
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #667eea;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+
 }
 
 .user-id {
